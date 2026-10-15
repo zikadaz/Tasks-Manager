@@ -57,7 +57,6 @@ dotnet run
 
 ## Endpoints da API
 
-> Ajuste a tabela conforme os endpoints que você realmente criou.
 
 | Método | Rota           | Descrição                  |
 |--------|----------------|----------------------------|
