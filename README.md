@@ -44,7 +44,7 @@ cd cmd
 go run main.go
 ```
 
-A API ficará disponível em `https://localhost:8080`.
+A API ficará disponível em `http://localhost:8080`.
 
 ### 3. Iniciar o cliente (client)
 
