@@ -65,8 +65,8 @@ dotnet run
 | GET    | `/tarefas/{id}`  | Busca uma tarefa pelo id   |
 | POST   | `/tarefas`       | Cria uma nova tarefa       |
 | PUT    | `/tarefas/{id}`  | Atualiza uma tarefa pelo id        |
-| DELETE | `/tarefas/{id}`  | Remove uma tarefa pelo id (a implementar)         | 
-| DELETE | `/tarefas`       | Remove todas as tarefas (a implementar) |
+| DELETE | `/tarefas/{id}`  | Remove uma tarefa pelo id          | 
+| DELETE | `/tarefas`       | Remove todas as tarefas |
 
 ### Exemplo de tarefa (JSON)
 
