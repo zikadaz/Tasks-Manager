@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 using System.Net.Http.Json;
 using System.Security.Cryptography.X509Certificates;
 using Exceptions;
+using System.Runtime.InteropServices;
+using Model;
+using System.Text.Json;
+using System.Formats.Asn1;
+using System.Text;
+using System.Text.Unicode;
 namespace ApiConnection
 {   // Abre uma conexao com a API local
     public class ConnectionLocalApi
@@ -90,7 +96,9 @@ namespace ApiConnection
             }
             try
             {
+                // Cria uma nova tarefa com o título e "done"
                var newTask = new {title, done};
+               // Posta a tarefa
             HttpResponseMessage response = await _httpClient.PostAsJsonAsync(endpoints[1], newTask);
             response.EnsureSuccessStatusCode();
             string content = await response.Content.ReadAsStringAsync();
@@ -102,15 +110,68 @@ namespace ApiConnection
                 throw;
             }
         }
-        public async Task<string> UpdateTask(int task_id)
+        public async Task<string> PutTask(int taskId, TaskModel task)
         {
-            // A implementar
-            throw new NotImplementedException();
+            // Transforma 'task' em  um json
+            string json = JsonSerializer.Serialize(task);
+            using var content = new StringContent(
+                json,
+                Encoding.UTF8,
+                "application/json"
+            );
+            // procura a tarefa pelo endpoint e a atualiza
+            HttpResponseMessage response = await _httpClient.PutAsync(
+                $"tarefas/{task.Id}",
+                content
+            );
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
         }
-        public async void DeleteTask(int task_id)
+        public async Task<string> UpdateTask(int taskId, string title, bool done)
         {
-            // A Implementar
-            throw new NotImplementedException();
+            try {
+                // pega a task usando de um método do cliente
+                string taskJson = await SearchTaskById(taskId);
+                TaskModel task = JsonSerializer.Deserialize<TaskModel>(taskJson)!;
+                // verifica se 'title' é nulo ou vazio
+                if(string.IsNullOrEmpty(title))
+                {
+                    Console.WriteLine("O título não pode ser vazio.");
+                    return "Título vazio ou nulo.";
+                }
+                // verifica se os parametros são iguais
+                else if(title == task.title && done == task.Done)
+                {
+                    Console.WriteLine("Parâmetros idênticos. Não alterando nada.");
+                    return "Nenhuma alteração necessária";
+                }
+                task.Done = done;
+                task.title = title;
+                return await PutTask(taskId, task);
+            }
+            catch(HttpRequestException e)
+            {
+                Console.WriteLine($"Erro ao fazer UPDATE:  {e}");
+                throw;
+            }
+        }
+        // Deleta uma  tarefa pelo id
+        public async Task<string> DeleteById(int taskId)
+        {
+            try
+            {
+                // Localiza a tarefa pelo Endpoint e a deleta
+                HttpResponseMessage  response = await _httpClient.DeleteAsync(
+                    $"tarefas/{taskId}"
+                );
+                response.EnsureSuccessStatusCode();
+                return $"Tarefa {taskId}  exclúida com sucesso.";
+            }
+            catch(HttpRequestException e)
+            {
+                Console.WriteLine($"Erro ao fazer o delete: {e.Message}");
+                throw;
+            }
         }
     }
 }
