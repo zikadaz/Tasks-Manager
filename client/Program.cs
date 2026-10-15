@@ -14,7 +14,7 @@ namespace Program
             await connection.DeleteById(1); // Deleta a tarefa com id 1
             /*
             CREATE (create task)
-            READ    (earch task)
+            READ    (search task)
             UPDATE  (update task)
             DELETE (delete task)
             */
